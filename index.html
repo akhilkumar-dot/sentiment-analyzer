@@ -1,0 +1,263 @@
+my index.html is <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #93c5fd;
+            --background-color: #ffffff;
+            --text-color: #1f2937;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
+
+        .card {
+            background-color: var(--background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .input-area {
+            margin-bottom: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 20px -10px rgba(99, 102, 241, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            display: none;
+            background-color: var(--background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .sentiment {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .emoji {
+            font-size: 3.5rem;
+            margin: 1rem 0;
+        }
+
+        .confidence {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background-color: #e5e7eb;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card, .result-box {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sentiment Analyzer</h1>
+            <p class="subtitle">Analyze the sentiment of your text in seconds</p>
+        </header>
+
+        <div class="card">
+            <div class="input-area">
+                <textarea id="text-input" placeholder="Enter or paste your text here..."></textarea>
+            </div>
+            <button id="analyze-btn" class="button">Check Sentiment</button>
+        </div>
+
+        <div id="result-box" class="result-box">
+            <div class="result-header">Analysis Result</div>
+            <div id="sentiment" class="sentiment">Positive</div>
+            <div id="emoji" class="emoji">😊</div>
+            <div class="confidence">Confidence: <span id="confidence-score">91.3%</span></div>
+            <div class="confidence-bar">
+                <div id="confidence-fill" class="confidence-fill" style="width: 91.3%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('text-input');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const resultBox = document.getElementById('result-box');
+            const sentimentEl = document.getElementById('sentiment');
+            const emojiEl = document.getElementById('emoji');
+            const confidenceScoreEl = document.getElementById('confidence-score');
+            const confidenceFillEl = document.getElementById('confidence-fill');
+
+            analyzeBtn.addEventListener('click', async function() {
+                const text = textInput.value.trim();
+                
+                if (text.length === 0) {
+                    alert('Please enter some text to analyze.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/predict_sentiment/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ text: text }),
+                    });
+
+                    const result = await response.json();
+
+                    // Update the UI with the result
+                    sentimentEl.textContent = result.predicted_sentiment;
+                    emojiEl.textContent = result.predicted_sentiment === 'Positive' ? '😊' : result.predicted_sentiment === 'Negative' ? '😔' : '😐';
+                    confidenceScoreEl.textContent = result.confidence + '%';
+                    confidenceFillEl.style.width = result.confidence + '%';
+
+                    // Apply color based on sentiment
+                    if (result.predicted_sentiment === 'Positive') {
+                        sentimentEl.style.color = '#10b981'; // green
+                    } else if (result.predicted_sentiment === 'Negative') {
+                        sentimentEl.style.color = '#ef4444'; // red
+                    } else {
+                        sentimentEl.style.color = '#6b7280'; // gray
+                    }
+
+                    // Show the result box with animation
+                    resultBox.style.display = 'block';
+                    
+                    // Scroll to result
+                    resultBox.scrollIntoView({ behavior: 'smooth' });
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Something went wrong. Please try again later.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
