@@ -90,7 +90,9 @@
         }
 
         .button {
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
             padding: 0.875rem 1.5rem;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -111,6 +113,13 @@
 
         .button:active {
             transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .result-box {
@@ -167,6 +176,67 @@
             transition: width 1s ease-in-out;
         }
 
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Loading Animation in Result Box */
+        .loading-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .loading-dots .dot {
+            width: 12px;
+            height: 12px;
+            margin: 0 5px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            animation: dotPulse 1.5s infinite ease-in-out;
+        }
+
+        .loading-dots .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(0.7); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
         @media (max-width: 640px) {
             h1 {
                 font-size: 2rem;
@@ -189,16 +259,30 @@
             <div class="input-area">
                 <textarea id="text-input" placeholder="Enter or paste your text here..."></textarea>
             </div>
-            <button id="analyze-btn" class="button">Check Sentiment</button>
+            <button id="analyze-btn" class="button">
+                <div id="spinner" class="spinner"></div>
+                <span id="button-text">Check Sentiment</span>
+            </button>
         </div>
 
         <div id="result-box" class="result-box">
-            <div class="result-header">Analysis Result</div>
-            <div id="sentiment" class="sentiment">Positive</div>
-            <div id="emoji" class="emoji">😊</div>
-            <div class="confidence">Confidence: <span id="confidence-score">91.3%</span></div>
-            <div class="confidence-bar">
-                <div id="confidence-fill" class="confidence-fill" style="width: 91.3%;"></div>
+            <div id="loading-container" class="loading-container">
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="loading-text">Analyzing sentiment...</div>
+            </div>
+            
+            <div id="result-content" style="display: none;">
+                <div class="result-header">Analysis Result</div>
+                <div id="sentiment" class="sentiment">Positive</div>
+                <div id="emoji" class="emoji">😊</div>
+                <div class="confidence">Confidence: <span id="confidence-score">91.3%</span></div>
+                <div class="confidence-bar">
+                    <div id="confidence-fill" class="confidence-fill" style="width: 91.3%;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -222,7 +306,7 @@
                 }
 
                 try {
-                    const response = await fetch('https://sentiment-analyzer-1-qd9p.onrender.com/predict_sentiment/', {
+                    const response = await fetch('http://127.0.0.1:8000/predict_sentiment/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
